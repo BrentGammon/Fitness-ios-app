@@ -1,0 +1,6 @@
+framework module Pods_FitnessHealthKitApp {
+  umbrella header "Pods-FitnessHealthKitApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

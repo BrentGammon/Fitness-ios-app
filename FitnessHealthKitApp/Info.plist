@@ -41,5 +41,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>NSHealthShareUsageDescription</key>
+    <string>Privacy - Health Share Usage Description</string>
 </dict>
 </plist>
