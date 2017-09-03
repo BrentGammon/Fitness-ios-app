@@ -13,17 +13,21 @@ import FBSDKLoginKit
 import Alamofire
 
 class ViewController: UIViewController, LoginButtonDelegate {
+    @IBOutlet weak var heartRate: UIButton!
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+        heartRate.isHidden = false
         getFBUserData()
     }
     
     func loginButtonDidLogOut(_ loginButton: LoginButton) {
         print("log out of application")
+        heartRate.isHidden = true
         let loginManager = LoginManager()
         loginManager.logOut()
     }
     
   
+    
     
  
     
@@ -35,39 +39,24 @@ class ViewController: UIViewController, LoginButtonDelegate {
         // Do any additional setup after loading the view, typically from a nib.
 
         let loginButton = LoginButton(readPermissions: [ .publicProfile ])
-        loginButton.center = view.center
+        loginButton.center = CGPoint(x: 190, y: 630)
 
         view.addSubview(loginButton)
         loginButton.delegate = self
 
         if (FBSDKAccessToken.current()) != nil{
+            heartRate.isHidden = false
             getFBUserData()
 
         }else {
             print("not logged in")
+            heartRate.isHidden = true
         }
 
 
     }
 
-    
 
-//    //when login button clicked
-//    @objc func loginButtonClicked() {
-//        let loginManager = LoginManager()
-//        loginManager.logIn([ .publicProfile ], viewController: self) { loginResult in
-//            switch loginResult {
-//            case .failed(let error):
-//                print(error)
-//            case .cancelled:
-//                print("logging out")
-//            case .success(let grantedPermissions, let declinedPermissions, let accessToken):
-//                print("logging into the application")
-//                self.getFBUserData()
-//            }
-//        }
-//    }
-//
     //function is fetching the user data
     func getFBUserData(){
         print("hello world")
@@ -76,7 +65,10 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 if (error == nil){
                     self.dict = result as! [String : AnyObject]
                     print(result!)
-                    print(self.dict)
+                    print(self.dict["name"]!)
+                    print(self.dict["email"]!)
+                    var x: [String : AnyObject]! = self.dict["picture"]!["data"]!! as! [String : AnyObject]
+                    print(x["url"]!)
                 }
             })
         }
@@ -115,7 +107,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                             
                             //print(result.quantity.doubleValue(for: HKUnit.count()))
                             //print(type(of: result))
-                            //print(String(describing: result).components(separatedBy: " "))
+                            print(String(describing: result).components(separatedBy: " "))
                         }
                     }
                     
