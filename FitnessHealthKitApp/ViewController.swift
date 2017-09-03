@@ -8,14 +8,78 @@
 
 import UIKit
 import HealthKit
-
+import FacebookLogin
+import FBSDKLoginKit
 import Alamofire
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, LoginButtonDelegate {
+    func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
+        getFBUserData()
+    }
+    
+    func loginButtonDidLogOut(_ loginButton: LoginButton) {
+        print("log out of application")
+        let loginManager = LoginManager()
+        loginManager.logOut()
+    }
+    
+  
+    
+ 
+    
+  
  let healthStore = HKHealthStore()
+     var dict : [String : AnyObject]!
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+
+        let loginButton = LoginButton(readPermissions: [ .publicProfile ])
+        loginButton.center = view.center
+
+        view.addSubview(loginButton)
+        loginButton.delegate = self
+
+        if (FBSDKAccessToken.current()) != nil{
+            getFBUserData()
+
+        }else {
+            print("not logged in")
+        }
+
+
+    }
+
+    
+
+//    //when login button clicked
+//    @objc func loginButtonClicked() {
+//        let loginManager = LoginManager()
+//        loginManager.logIn([ .publicProfile ], viewController: self) { loginResult in
+//            switch loginResult {
+//            case .failed(let error):
+//                print(error)
+//            case .cancelled:
+//                print("logging out")
+//            case .success(let grantedPermissions, let declinedPermissions, let accessToken):
+//                print("logging into the application")
+//                self.getFBUserData()
+//            }
+//        }
+//    }
+//
+    //function is fetching the user data
+    func getFBUserData(){
+        print("hello world")
+        if((FBSDKAccessToken.current()) != nil){
+            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email"]).start(completionHandler: { (connection, result, error) -> Void in
+                if (error == nil){
+                    self.dict = result as! [String : AnyObject]
+                    print(result!)
+                    print(self.dict)
+                }
+            })
+        }
     }
 
     override func didReceiveMemoryWarning() {
