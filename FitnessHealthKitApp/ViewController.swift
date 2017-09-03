@@ -11,17 +11,33 @@ import HealthKit
 import FacebookLogin
 import FBSDKLoginKit
 import Alamofire
+import AlamofireImage
 
 class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var heartRate: UIButton!
+    @IBOutlet weak var profileImageView: UIImageView!
+    @IBOutlet weak var getCallButton: UIButton!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var emailLabel: UILabel!
+    
+    
+    
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
         heartRate.isHidden = false
+        profileImageView.isHidden = false
+        getCallButton.isHidden = false
+        nameLabel.isHidden = false
+        emailLabel.isHidden = false
         getFBUserData()
     }
     
     func loginButtonDidLogOut(_ loginButton: LoginButton) {
         print("log out of application")
         heartRate.isHidden = true
+        profileImageView.isHidden = true
+        getCallButton.isHidden = true
+        nameLabel.isHidden = true
+        emailLabel.isHidden = true
         let loginManager = LoginManager()
         loginManager.logOut()
     }
@@ -43,14 +59,25 @@ class ViewController: UIViewController, LoginButtonDelegate {
 
         view.addSubview(loginButton)
         loginButton.delegate = self
+        
+        
 
         if (FBSDKAccessToken.current()) != nil{
             heartRate.isHidden = false
+            profileImageView.isHidden = false
+            getCallButton.isHidden = false
+            nameLabel.isHidden = false
+            emailLabel.isHidden = false
+            
             getFBUserData()
 
         }else {
             print("not logged in")
             heartRate.isHidden = true
+            profileImageView.isHidden = true
+            getCallButton.isHidden = true
+            nameLabel.isHidden = true
+            emailLabel.isHidden = true
         }
 
 
@@ -64,11 +91,17 @@ class ViewController: UIViewController, LoginButtonDelegate {
             FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email"]).start(completionHandler: { (connection, result, error) -> Void in
                 if (error == nil){
                     self.dict = result as! [String : AnyObject]
-                    print(result!)
-                    print(self.dict["name"]!)
-                    print(self.dict["email"]!)
+                    //print(result!)
+                    //print(self.dict["name"]!)
+                    //print(self.dict["email"]!)
                     var x: [String : AnyObject]! = self.dict["picture"]!["data"]!! as! [String : AnyObject]
-                    print(x["url"]!)
+                    print((self.dict["name"]! as! String))
+                    self.nameLabel.text = (self.dict["name"]! as! String)
+                    self.emailLabel.text = (self.dict["email"]! as! String)
+                    
+                    let stringURL = x["url"]!
+                    let url = URL(string: stringURL as! String)!
+                    self.profileImageView.af_setImage(withURL: url)
                 }
             })
         }
