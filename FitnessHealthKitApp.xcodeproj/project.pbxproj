@@ -16,6 +16,7 @@
 		11467BF91F54A0BA000708C5 /* FitnessHealthKitAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11467BF81F54A0BA000708C5 /* FitnessHealthKitAppTests.swift */; };
 		11467C041F54A0BA000708C5 /* FitnessHealthKitAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11467C031F54A0BA000708C5 /* FitnessHealthKitAppUITests.swift */; };
 		119ADBC91F54B10C003F7178 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 119ADBC81F54B10C003F7178 /* HealthKit.framework */; };
+		11D280611F5EDCFF00AC4632 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 11D2805F1F5DAA7500AC4632 /* GoogleService-Info.plist */; };
 		7AB9EA3EE768C9841358CE11 /* Pods_FitnessHealthKitAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48F4D26432BB6ECA14BCCCB4 /* Pods_FitnessHealthKitAppTests.framework */; };
 		7BD08B58A3C6658B58AC2755 /* Pods_FitnessHealthKitAppUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D83981122612D248437C523 /* Pods_FitnessHealthKitAppUITests.framework */; };
 		90CA0D0C647A46EFEC9BBB34 /* Pods_FitnessHealthKitApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F19155A5AC201A0D7EEFFA3 /* Pods_FitnessHealthKitApp.framework */; };
@@ -58,6 +59,7 @@
 		11467C051F54A0BA000708C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		119ADBC71F54B10C003F7178 /* FitnessHealthKitApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FitnessHealthKitApp.entitlements; sourceTree = "<group>"; };
 		119ADBC81F54B10C003F7178 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		11D2805F1F5DAA7500AC4632 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2D83981122612D248437C523 /* Pods_FitnessHealthKitAppUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitnessHealthKitAppUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		48F4D26432BB6ECA14BCCCB4 /* Pods_FitnessHealthKitAppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitnessHealthKitAppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F19155A5AC201A0D7EEFFA3 /* Pods_FitnessHealthKitApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FitnessHealthKitApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -120,6 +122,7 @@
 		11467BDF1F54A0BA000708C5 /* FitnessHealthKitApp */ = {
 			isa = PBXGroup;
 			children = (
+				11D2805F1F5DAA7500AC4632 /* GoogleService-Info.plist */,
 				119ADBC71F54B10C003F7178 /* FitnessHealthKitApp.entitlements */,
 				11467BE01F54A0BA000708C5 /* AppDelegate.swift */,
 				11467BE21F54A0BA000708C5 /* ViewController.swift */,
@@ -302,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11467BEE1F54A0BA000708C5 /* LaunchScreen.storyboard in Resources */,
+				11D280611F5EDCFF00AC4632 /* GoogleService-Info.plist in Resources */,
 				11467BEB1F54A0BA000708C5 /* Assets.xcassets in Resources */,
 				11467BE61F54A0BA000708C5 /* Main.storyboard in Resources */,
 			);
@@ -368,6 +372,11 @@
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookLogin/FacebookLogin.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/Granola/Granola.framework",
+				"${BUILT_PRODUCTS_DIR}/ObjectiveSugar/ObjectiveSugar.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
@@ -378,6 +387,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookLogin.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Granola.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectiveSugar.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

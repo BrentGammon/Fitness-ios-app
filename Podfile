@@ -8,6 +8,8 @@ target 'FitnessHealthKitApp' do
   pod 'AlamofireImage', '~> 3.2'
   pod 'FacebookCore'
   pod 'FacebookLogin'
+  pod 'Firebase/Auth'
+  pod 'Granola'
 
   # Pods for FitnessHealthKitApp
 

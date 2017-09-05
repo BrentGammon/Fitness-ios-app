@@ -12,6 +12,8 @@ import FacebookLogin
 import FBSDKLoginKit
 import Alamofire
 import AlamofireImage
+import FirebaseAuth
+import Granola
 
 class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var heartRate: UIButton!
@@ -19,6 +21,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var getCallButton: UIButton!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
+    @IBOutlet weak var uidLabel: UILabel!
     
     
     
@@ -28,7 +31,8 @@ class ViewController: UIViewController, LoginButtonDelegate {
         getCallButton.isHidden = false
         nameLabel.isHidden = false
         emailLabel.isHidden = false
-        getFBUserData()
+        uidLabel.isHidden = false
+        //getFBUserData()
     }
     
     func loginButtonDidLogOut(_ loginButton: LoginButton) {
@@ -38,6 +42,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
         getCallButton.isHidden = true
         nameLabel.isHidden = true
         emailLabel.isHidden = true
+        uidLabel.isHidden = true
         let loginManager = LoginManager()
         loginManager.logOut()
     }
@@ -61,15 +66,41 @@ class ViewController: UIViewController, LoginButtonDelegate {
         loginButton.delegate = self
         
         
-
+        print("here a")
         if (FBSDKAccessToken.current()) != nil{
+            print("here b")
+            let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
+            
+            Auth.auth().signIn(with: credential) { (user, error) in
+                if error != nil {
+                    // ...
+                    return
+                }
+                print("here c")
+                self.nameLabel.text = user?.displayName
+                self.emailLabel.text = user?.email
+                self.uidLabel.text = user?.uid
+                
+                if let x = user?.photoURL {
+                    print(x)
+                    self.profileImageView.af_setImage(withURL: x)
+                }
+               
+                
+//                let stringURL = user?.photoURL
+//                let url = URL(string: stringURL as! String)!
+//                self.profileImageView.af_setImage(withURL: url)
+                
+                
+            }
+            
             heartRate.isHidden = false
             profileImageView.isHidden = false
             getCallButton.isHidden = false
             nameLabel.isHidden = false
             emailLabel.isHidden = false
             
-            getFBUserData()
+           // getFBUserData()
 
         }else {
             print("not logged in")
@@ -78,34 +109,34 @@ class ViewController: UIViewController, LoginButtonDelegate {
             getCallButton.isHidden = true
             nameLabel.isHidden = true
             emailLabel.isHidden = true
+            uidLabel.isHidden = true
         }
 
 
     }
 
 
-    //function is fetching the user data
-    func getFBUserData(){
-        print("hello world")
-        if((FBSDKAccessToken.current()) != nil){
-            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email"]).start(completionHandler: { (connection, result, error) -> Void in
-                if (error == nil){
-                    self.dict = result as! [String : AnyObject]
-                    //print(result!)
-                    //print(self.dict["name"]!)
-                    //print(self.dict["email"]!)
-                    var x: [String : AnyObject]! = self.dict["picture"]!["data"]!! as! [String : AnyObject]
-                    print((self.dict["name"]! as! String))
-                    self.nameLabel.text = (self.dict["name"]! as! String)
-                    self.emailLabel.text = (self.dict["email"]! as! String)
-                    
-                    let stringURL = x["url"]!
-                    let url = URL(string: stringURL as! String)!
-                    self.profileImageView.af_setImage(withURL: url)
-                }
-            })
-        }
-    }
+//    //function is fetching the user data
+//    func getFBUserData(){
+//            if((FBSDKAccessToken.current()) != nil){
+//            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email"]).start(completionHandler: { (connection, result, error) -> Void in
+//                if (error == nil){
+//                    self.dict = result as! [String : AnyObject]
+//                    //print(result!)
+//                    //print(self.dict["name"]!)
+//                    //print(self.dict["email"]!)
+//                 //   var x: [String : AnyObject]! = self.dict["picture"]!["data"]!! as! [String : AnyObject]
+//                    //print((self.dict["name"]! as! String))
+//                    //self.nameLabel.text = (self.dict["name"]! as! String)
+//                    //self.emailLabel.text = (self.dict["email"]! as! String)
+////                    
+////                    let stringURL = x["url"]!
+////                    let url = URL(string: stringURL as! String)!
+////                    self.profileImageView.af_setImage(withURL: url)
+//                }
+//            })
+//        }
+//    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -129,22 +160,34 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 if(res){
                     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
                     //var x: [String] = [];
-                    let heartQuery = HKSampleQuery(sampleType: heartRateType!,
-                                                   predicate: nil,
-                                                   limit: 1,
-                                                   sortDescriptors: [sortDescriptor])
-                    {
+                    let heartQuery = HKSampleQuery(sampleType: heartRateType!,predicate: nil,limit: 3, sortDescriptors: [sortDescriptor]){
+                        
                         (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
                         for result in results as! [HKQuantitySample]
-                        {
-                            
-                            //print(result.quantity.doubleValue(for: HKUnit.count()))
-                            //print(type(of: result))
-                            print(String(describing: result).components(separatedBy: " "))
-                        }
+                            {
+                                do{
+                                    print(try serializer.json(for: result))
+                                } catch {
+                                    print("error")
+                                    return
+                                }
+                                
+                                //print(result.quantity.doubleValue(for: HKUnit.count()))
+                                //print(type(of: result))
+                           
+                                //print(JSONSerialization.jsonObject(with: result))
+                                //let resultArray = String(describing: result).components(separatedBy: " ")
+                                //print(resultArray)
+                                //print(resultArray[0])
+                                //print(resultArray[14])
+                            }
                     }
                     
+                    //need dict [date][array of values]
+                    
                     self.healthStore.execute(heartQuery)
+            
                     
                 }
             })
