@@ -10,6 +10,7 @@ target 'FitnessHealthKitApp' do
   pod 'FacebookLogin'
   pod 'Firebase/Auth'
   pod 'Granola'
+  pod 'SwiftyJSON'
 
   # Pods for FitnessHealthKitApp
 

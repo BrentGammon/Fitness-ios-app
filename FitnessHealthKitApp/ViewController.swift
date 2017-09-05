@@ -14,6 +14,7 @@ import Alamofire
 import AlamofireImage
 import FirebaseAuth
 import Granola
+import SwiftyJSON
 
 class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var heartRate: UIButton!
@@ -160,27 +161,29 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 if(res){
                     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
                     //var x: [String] = [];
-                    let heartQuery = HKSampleQuery(sampleType: heartRateType!,predicate: nil,limit: 3, sortDescriptors: [sortDescriptor]){
+                    let heartQuery = HKSampleQuery(sampleType: heartRateType!,predicate: nil,limit: 1, sortDescriptors: [sortDescriptor]){
                         
                         (query, results, error) -> Void in
                         let serializer = OMHSerializer()
                         for result in results as! [HKQuantitySample]
                             {
                                 do{
-                                    print(try serializer.json(for: result))
+                                    let jsonData = try serializer.json(for: result) 
+                                    //let json = JSON(data: jsonData)
+                                    //print(jsonData )
+                                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                                    //print(type(of: data))
+                                    
+                                    let json = JSON(data)
+
+                                    print(json["body"]["heart_rate"])
+                                    print(json["body"]["effective_time_frame"])
+                                    print(type(of: json))
                                 } catch {
                                     print("error")
                                     return
                                 }
                                 
-                                //print(result.quantity.doubleValue(for: HKUnit.count()))
-                                //print(type(of: result))
-                           
-                                //print(JSONSerialization.jsonObject(with: result))
-                                //let resultArray = String(describing: result).components(separatedBy: " ")
-                                //print(resultArray)
-                                //print(resultArray[0])
-                                //print(resultArray[14])
                             }
                     }
                     

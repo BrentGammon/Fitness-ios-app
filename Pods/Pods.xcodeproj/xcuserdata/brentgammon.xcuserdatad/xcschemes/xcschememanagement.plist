@@ -74,6 +74,11 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>SwiftyJSON.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>nanopb.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -93,11 +98,6 @@
 			<true/>
 		</dict>
 		<key>44CAD6CE523055ED339E87154473A254</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>51E70B391B9A4DB3A8F011093FAF4E12</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -137,7 +137,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>A627B5DC40D663CC812E4C6CA45B6DFC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>AAA708471B5C2D13C42462F78CB67893</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B95F3700F37EF289C9A1136E08882DC3</key>
 		<dict>
 			<key>primary</key>
 			<true/>
