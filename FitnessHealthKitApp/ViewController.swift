@@ -116,34 +116,14 @@ class ViewController: UIViewController, LoginButtonDelegate {
 
     }
 
-
-//    //function is fetching the user data
-//    func getFBUserData(){
-//            if((FBSDKAccessToken.current()) != nil){
-//            FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, picture.type(large), email"]).start(completionHandler: { (connection, result, error) -> Void in
-//                if (error == nil){
-//                    self.dict = result as! [String : AnyObject]
-//                    //print(result!)
-//                    //print(self.dict["name"]!)
-//                    //print(self.dict["email"]!)
-//                 //   var x: [String : AnyObject]! = self.dict["picture"]!["data"]!! as! [String : AnyObject]
-//                    //print((self.dict["name"]! as! String))
-//                    //self.nameLabel.text = (self.dict["name"]! as! String)
-//                    //self.emailLabel.text = (self.dict["email"]! as! String)
-////                    
-////                    let stringURL = x["url"]!
-////                    let url = URL(string: stringURL as! String)!
-////                    self.profileImageView.af_setImage(withURL: url)
-//                }
-//            })
-//        }
-//    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
 
+    
+    //sync health data
+    
     
     @IBAction func getHeartRateData(_ sender: Any) {
         if HKHealthStore.isHealthDataAvailable() {
@@ -160,8 +140,37 @@ class ViewController: UIViewController, LoginButtonDelegate {
             healthStore.requestAuthorization(toShare: [], read: [stepCounterType!,heartRateType!], completion: { (res, error) in
                 if(res){
                     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+                    
+                    
+                    
+//                    //date formatter for database
+//                    
+//                    let dateFormatterGet = DateFormatter()
+//                    dateFormatterGet.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+//                    
+//                    let dateFormatter = DateFormatter()
+//                    dateFormatter.dateFormat = "dd-MM-yyyy"
+//                    
+//                    let date: Date? = dateFormatterGet.date(from: "2017-09-05T20:03:43.558+01:00")
+//                    
+//                    
+                    let today = Date()
+                    let lastMonth = Calendar.current.date(byAdding: .day, value: -30, to: today)
+//
+//                    let dateFormated = dateFormatter.string(from: date!)
+//                    let lastMonthFormated = dateFormatter.string(from: lastMonth!)
+                   
+                    
+                    
+                    
+                    
+                    
+                    //let predicate = HKQuery.predicate(forActivitySummariesBetweenStart: today, end: lastMonth)
+                    let predicateDate = HKQuery.predicateForSamples(withStart: lastMonth, end: today)
+
+                  
                     //var x: [String] = [];
-                    let heartQuery = HKSampleQuery(sampleType: heartRateType!,predicate: nil,limit: 1, sortDescriptors: [sortDescriptor]){
+                    let heartQuery = HKSampleQuery(sampleType: heartRateType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
                         
                         (query, results, error) -> Void in
                         let serializer = OMHSerializer()
@@ -175,9 +184,10 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                     //print(type(of: data))
                                     
                                     let json = JSON(data)
-
-                                    print(json["body"]["heart_rate"])
-                                    print(json["body"]["effective_time_frame"])
+                                    
+                                    print(json["body"])
+                                    //print(json["body"]["heart_rate"])
+                                    //print(json["body"]["effective_time_frame"])
                                     print(type(of: json))
                                 } catch {
                                     print("error")
@@ -196,6 +206,13 @@ class ViewController: UIViewController, LoginButtonDelegate {
             })
         }
     }
+    
+    
+    
+    
+    
+    
+    
     
     @IBAction func getData(_ sender: Any) {
         Alamofire.request("https://jsonplaceholder.typicode.com/users").responseJSON {
