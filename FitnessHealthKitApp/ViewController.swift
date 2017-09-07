@@ -33,7 +33,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
         nameLabel.isHidden = false
         emailLabel.isHidden = false
         uidLabel.isHidden = false
-        //getFBUserData()
     }
     
     func loginButtonDidLogOut(_ loginButton: LoginButton) {
@@ -83,16 +82,8 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 self.uidLabel.text = user?.uid
                 
                 if let x = user?.photoURL {
-                    print(x)
                     self.profileImageView.af_setImage(withURL: x)
                 }
-               
-                
-//                let stringURL = user?.photoURL
-//                let url = URL(string: stringURL as! String)!
-//                self.profileImageView.af_setImage(withURL: url)
-                
-                
             }
             
             heartRate.isHidden = false
@@ -140,61 +131,30 @@ class ViewController: UIViewController, LoginButtonDelegate {
             healthStore.requestAuthorization(toShare: [], read: [stepCounterType!,heartRateType!], completion: { (res, error) in
                 if(res){
                     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-                    
-                    
-                    
-//                    //date formatter for database
-//                    
-//                    let dateFormatterGet = DateFormatter()
-//                    dateFormatterGet.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-//                    
-//                    let dateFormatter = DateFormatter()
-//                    dateFormatter.dateFormat = "dd-MM-yyyy"
-//                    
-//                    let date: Date? = dateFormatterGet.date(from: "2017-09-05T20:03:43.558+01:00")
-//                    
-//                    
                     let today = Date()
                     let lastMonth = Calendar.current.date(byAdding: .day, value: -30, to: today)
-//
-//                    let dateFormated = dateFormatter.string(from: date!)
-//                    let lastMonthFormated = dateFormatter.string(from: lastMonth!)
-                   
-                    
-                    
-                    
-                    
-                    
-                    //let predicate = HKQuery.predicate(forActivitySummariesBetweenStart: today, end: lastMonth)
                     let predicateDate = HKQuery.predicateForSamples(withStart: lastMonth, end: today)
-
-                  
-                    //var x: [String] = [];
+                    
+                    var ajaxObject = [JSON]()
+    
                     let heartQuery = HKSampleQuery(sampleType: heartRateType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        
                         (query, results, error) -> Void in
                         let serializer = OMHSerializer()
                         for result in results as! [HKQuantitySample]
                             {
                                 do{
-                                    let jsonData = try serializer.json(for: result) 
-                                    //let json = JSON(data: jsonData)
-                                    //print(jsonData )
+                                    let jsonData = try serializer.json(for: result)
                                     let data  = jsonData.data(using: String.Encoding.utf8)!
-                                    //print(type(of: data))
-                                    
                                     let json = JSON(data)
-                                    
-                                    print(json["body"])
-                                    //print(json["body"]["heart_rate"])
-                                    //print(json["body"]["effective_time_frame"])
-                                    print(type(of: json))
+                                    print(type(of:json["body"]))
+                                    ajaxObject.append(json["body"])
                                 } catch {
                                     print("error")
                                     return
                                 }
                                 
                             }
+                        Alamofire.request("http://192.168.1.98:3005/", method: .post, parameters:  ["data": ajaxObject], encoding: URLEncoding.httpBody)
                     }
                     
                     //need dict [date][array of values]
@@ -206,12 +166,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
             })
         }
     }
-    
-    
-    
-    
-    
-    
     
     
     @IBAction func getData(_ sender: Any) {
