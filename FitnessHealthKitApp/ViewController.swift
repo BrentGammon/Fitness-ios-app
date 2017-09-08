@@ -47,11 +47,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
         loginManager.logOut()
     }
     
-  
-    
-    
- 
-    
+
   
  let healthStore = HKHealthStore()
      var dict : [String : AnyObject]!
@@ -92,7 +88,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
             nameLabel.isHidden = false
             emailLabel.isHidden = false
             
-           // getFBUserData()
 
         }else {
             print("not logged in")
@@ -146,22 +141,28 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                     let jsonData = try serializer.json(for: result)
                                     let data  = jsonData.data(using: String.Encoding.utf8)!
                                     let json = JSON(data)
-                                    print(type(of:json["body"]))
-                                    ajaxObject.append(json["body"])
+                                    
+                                    let jsony: JSON = [
+                                        self.uidLabel.text! : json["body"]
+                                    ]
+                                    ajaxObject.append(jsony)
                                 } catch {
                                     print("error")
                                     return
                                 }
                                 
                             }
-                        Alamofire.request("http://192.168.1.98:3005/", method: .post, parameters:  ["data": ajaxObject], encoding: URLEncoding.httpBody)
+                        
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                          
+                        ]
+                      
+                        Alamofire.request("http://192.168.1.98:3005/heartrate", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
                     }
                     
-                    //need dict [date][array of values]
-                    
                     self.healthStore.execute(heartQuery)
-            
-                    
                 }
             })
         }
