@@ -73,6 +73,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
                 print("here c")
+                print(user!)
                 self.nameLabel.text = user?.displayName
                 self.emailLabel.text = user?.email
                 self.uidLabel.text = user?.uid
@@ -117,21 +118,53 @@ class ViewController: UIViewController, LoginButtonDelegate {
             //create quanity type
             let stepCounterType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)
             let heartRateType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)
+            let flightsClimbed = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.flightsClimbed)
+            //let standHours = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.)
+            let activeEnergyBurned = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)
+            
+            if #available(iOS 11.0, *) {
+                let restingHeartRate = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.restingHeartRate) //figure how to best handle this
+            } else {
+                // Fallback on earlier versions
+            }
+            let restingEnergy = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.basalEnergyBurned)
+            let walkingRunningDistance = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)
+            
+            
+            
+            
+            let sleepData = HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.sleepAnalysis)
+            
+            
+            //stand hours
+            //exercise minutes
+            
+            
             
             
             
             //check if it is
             print(healthStore.authorizationStatus(for: stepCounterType!).rawValue)
             
-            healthStore.requestAuthorization(toShare: [], read: [stepCounterType!,heartRateType!], completion: { (res, error) in
+            healthStore.requestAuthorization(toShare: [], read: [
+                stepCounterType!, //Done
+                heartRateType!, //Done
+                flightsClimbed!, //Done
+                activeEnergyBurned!, //Done
+                restingEnergy!, //workaround
+                walkingRunningDistance!,
+                sleepData! //Done
+                
+                ], completion: { (res, error) in
                 if(res){
                     let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
                     let today = Date()
-                    let lastMonth = Calendar.current.date(byAdding: .day, value: -30, to: today)
+                    let lastMonth = Calendar.current.date(byAdding: .day, value: -7, to: today)
                     let predicateDate = HKQuery.predicateForSamples(withStart: lastMonth, end: today)
-                    
                     var ajaxObject = [JSON]()
-    
+                    
+                    
+                    
                     let heartQuery = HKSampleQuery(sampleType: heartRateType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
                         (query, results, error) -> Void in
                         let serializer = OMHSerializer()
@@ -141,7 +174,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                     let jsonData = try serializer.json(for: result)
                                     let data  = jsonData.data(using: String.Encoding.utf8)!
                                     let json = JSON(data)
-                                    
                                     let jsony: JSON = [
                                         self.uidLabel.text! : json["body"]
                                     ]
@@ -150,19 +182,148 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                     print("error")
                                     return
                                 }
-                                
                             }
-                        
                         let parameters: [String: [JSON]] = [
                             "data" : ajaxObject
-                          
                         ]
-                      
                         Alamofire.request("http://192.168.1.98:3005/heartrate", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
                         //todo handle the reponse
                     }
                     
+                    let stepCounterQuery = HKSampleQuery(sampleType: stepCounterType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+                        (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
+                        for result in results as! [HKQuantitySample]
+                        {
+                            do{
+                                let jsonData = try serializer.json(for: result)
+                                let data  = jsonData.data(using: String.Encoding.utf8)!
+                                let json = JSON(data)
+                                let jsony: JSON = [
+                                    self.uidLabel.text! : json["body"]
+                                ]
+                                ajaxObject.append(jsony)
+                            } catch {
+                                print("error")
+                                return
+                            }
+                        }
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                        ]
+                        Alamofire.request("http://192.168.1.98:3005/stepCounter", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
+                    }
+                    
+                    
+                    let flightsClimbedQuery = HKSampleQuery(sampleType: flightsClimbed!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+                        (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
+                        for result in results as! [HKQuantitySample]
+                        {
+                            do{
+                                let jsonData = try serializer.json(for: result)
+                                let data  = jsonData.data(using: String.Encoding.utf8)!
+                                let json = JSON(data)
+                                let jsony: JSON = [
+                                    self.uidLabel.text! : json["body"]
+                                ]
+                                ajaxObject.append(jsony)
+                            } catch {
+                                print("error")
+                                return
+                            }
+                        }
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                        ]
+                        Alamofire.request("http://192.168.1.98:3005/flightsClimbed", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
+                    }
+                    
+                    let activeEnergyBurnedQuery = HKSampleQuery(sampleType: activeEnergyBurned!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+                        (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
+                        for result in results as! [HKQuantitySample]
+                        {
+                            do{
+                                let jsonData = try serializer.json(for: result)
+                                let data  = jsonData.data(using: String.Encoding.utf8)!
+                                let json = JSON(data)
+                                let jsony: JSON = [
+                                    self.uidLabel.text! : json["body"]
+                                ]
+                                ajaxObject.append(jsony)
+                            } catch {
+                                print("error")
+                                return
+                            }
+                        }
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                        ]
+                        Alamofire.request("http://192.168.1.98:3005/activeEnergyBurned", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
+                    }
+                    
+                    let walkingRunningDistance = HKSampleQuery(sampleType: walkingRunningDistance!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+                        (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
+                        for result in results as! [HKQuantitySample]
+                        {
+                            do{
+                                let jsonData = try serializer.json(for: result)
+                                let data  = jsonData.data(using: String.Encoding.utf8)!
+                                let json = JSON(data)
+                                let jsony: JSON = [
+                                    self.uidLabel.text! : json["body"]
+                                ]
+                                ajaxObject.append(jsony)
+                            } catch {
+                                print("error")
+                                return
+                            }
+                        }
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                        ]
+                        Alamofire.request("http://192.168.1.98:3005/walkingRunningDistance", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
+                    }
+                    
+                    let sleepQuery = HKSampleQuery(sampleType: sleepData!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+                        (query, results, error) -> Void in
+                        let serializer = OMHSerializer()
+                        for result in results as! [HKCategorySample]
+                        {
+                            do{
+                                let jsonData = try serializer.json(for: result)
+                                let data  = jsonData.data(using: String.Encoding.utf8)!
+                                let json = JSON(data)
+                                let jsony: JSON = [
+                                    self.uidLabel.text! : json["body"]
+                                ]
+                                ajaxObject.append(jsony)
+                            } catch {
+                                print("error")
+                                return
+                            }
+                        }
+                        let parameters: [String: [JSON]] = [
+                            "data" : ajaxObject
+                        ]
+                        Alamofire.request("http://192.168.1.98:3005/sleepData", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+                        //todo handle the reponse
+                    }
+             
+                    
+                   
+                    self.healthStore.execute(walkingRunningDistance)
+                    self.healthStore.execute(sleepQuery)
+                    self.healthStore.execute(activeEnergyBurnedQuery)
+                    self.healthStore.execute(flightsClimbedQuery)
                     self.healthStore.execute(heartQuery)
+                    self.healthStore.execute(stepCounterQuery)
                 }
             })
         }
