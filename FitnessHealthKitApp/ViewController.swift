@@ -16,6 +16,7 @@ import FirebaseAuth
 import Granola
 import SwiftyJSON
 
+
 class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var heartRate: UIButton!
     @IBOutlet weak var profileImageView: UIImageView!
@@ -124,14 +125,12 @@ class ViewController: UIViewController, LoginButtonDelegate {
     
     @IBAction func getHeartRateData(_ sender: Any) {
         if HKHealthStore.isHealthDataAvailable() {
-            
             //create quanity type
             let stepCounterType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)
             let heartRateType = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)
             let flightsClimbed = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.flightsClimbed)
             //let standHours = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.)
             let activeEnergyBurned = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.activeEnergyBurned)
-            
             if #available(iOS 11.0, *) {
                 let restingHeartRate = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.restingHeartRate) //figure how to best handle this
             } else {
@@ -139,23 +138,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             }
             let restingEnergy = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.basalEnergyBurned)
             let walkingRunningDistance = HKObjectType.quantityType(forIdentifier: HKQuantityTypeIdentifier.distanceWalkingRunning)
-            
-            
-            
-            
             let sleepData = HKObjectType.categoryType(forIdentifier: HKCategoryTypeIdentifier.sleepAnalysis)
-            
-            
-            //stand hours
-            //exercise minutes
-            
-            
-            
-            
-            
-            //check if it is
-            //print(healthStore.authorizationStatus(for: stepCounterType!).rawValue)
-            
             healthStore.requestAuthorization(toShare: [], read: [
                 stepCounterType!, //Done
                 heartRateType!, //Done
@@ -167,209 +150,235 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 
                 ], completion: { (res, error) in
                 if(res){
-                    
-                    let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-                    let today = Date()
-                    
-                    var start = Date()
-                    var lastSync = String()
-                    Alamofire.request("http://129.12.178.207:3005/user/lastSync/" + self.uidValue!).validate().responseJSON {
+                    Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!).validate().responseJSON {
                         response in switch response.result {
                         case .success(let value):
+                          
                             let json = JSON(value)
                              if(json[0]["lastsync"] == JSON.null) {
-                                start = Calendar.current.date(byAdding: .day, value: -7, to: today)!
+                                let today = Date()
+                                let start = Calendar.current.date(byAdding: .day, value: -7, to: today)!
+                                let predicateDate = HKQuery.predicateForSamples(withStart: start, end: today)
+                                self.sendData(predicateDate: predicateDate, stepCounterType:stepCounterType!,heartRateType:heartRateType!, flightsClimbed:flightsClimbed!,activeEnergyBurned:activeEnergyBurned!,walkingRunningDistance:walkingRunningDistance!, sleepData:sleepData!)
                              } else {
-                                
                                 //print("we have a date")
-                                let dates = json[0]["lastsync"].string!
-                                let dateFormatter = DateFormatter()
-                                dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-                                let date = dateFormatter.date(from: dates)
-                                print(dates)
-                                print(date!)
-                                print(today)
-                                start = date!
+                                //let dateString:String = json[0]["lastsync"].stringValue
+                                if let string = json[0]["lastsync"].rawString() {
+                                    let today = Date()
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+                                    dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+                                    
+                                    
+                                    print("==========================")
+                                    print("Data String")
+                                    print(string)////2017-11-01T14:18:00.131Z
+                                    
+                                   
+                                    
+                                    
+                                    print("Date string to date")
+                                    print(dateFormatter.date(from: string))
+                                    print("today date")
+                                    print(today)
+                                    let predicateDate = HKQuery.predicateForSamples(withStart: dateFormatter.date(from: string), end: today)
+                                    print(predicateDate)
+                                    self.sendData(predicateDate: predicateDate, stepCounterType:stepCounterType!,heartRateType:heartRateType!, flightsClimbed:flightsClimbed!,activeEnergyBurned:activeEnergyBurned!,walkingRunningDistance:walkingRunningDistance!, sleepData:sleepData!)
+                                    print("==========================")
+                                }
+                            
                             }
                         case .failure(let error):
                             print(error)
                         }
+             
                     }
-                    
-                    let predicateDate = HKQuery.predicateForSamples(withStart: start, end: today)
-                    print(predicateDate)
-                    
-                    let heartQuery = HKSampleQuery(sampleType: heartRateType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKQuantitySample]
-                            {
-                                do{
-                                    let jsonData = try serializer.json(for: result)
-                                    let data  = jsonData.data(using: String.Encoding.utf8)!
-                                    let json = JSON(data)
-                                    let jsony: JSON = [
-                                        self.uidLabel.text! : json["body"]
-                                    ]
-                                    ajaxObject.append(jsony)
-                                } catch {
-                                    print("error")
-                                    return
-                                }
-                            }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/heartrate", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-                    
-                    let stepCounterQuery = HKSampleQuery(sampleType: stepCounterType!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKQuantitySample]
-                        {
-                            do{
-                                let jsonData = try serializer.json(for: result)
-                                let data  = jsonData.data(using: String.Encoding.utf8)!
-                                let json = JSON(data)
-                                let jsony: JSON = [
-                                    self.uidLabel.text! : json["body"]
-                                ]
-                                ajaxObject.append(jsony)
-                            } catch {
-                                print("error")
-                                return
-                            }
-                        }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/stepCounter", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-                    
-                    
-                    let flightsClimbedQuery = HKSampleQuery(sampleType: flightsClimbed!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKQuantitySample]
-                        {
-                            do{
-                                let jsonData = try serializer.json(for: result)
-                                let data  = jsonData.data(using: String.Encoding.utf8)!
-                                let json = JSON(data)
-                                let jsony: JSON = [
-                                    self.uidLabel.text! : json["body"]
-                                ]
-                                ajaxObject.append(jsony)
-                            } catch {
-                                print("error")
-                                return
-                            }
-                        }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/flightsClimbed", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-                    
-                    let activeEnergyBurnedQuery = HKSampleQuery(sampleType: activeEnergyBurned!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKQuantitySample]
-                        {
-                            do{
-                                let jsonData = try serializer.json(for: result)
-                                let data  = jsonData.data(using: String.Encoding.utf8)!
-                                let json = JSON(data)
-                                let jsony: JSON = [
-                                    self.uidLabel.text! : json["body"]
-                                ]
-                                ajaxObject.append(jsony)
-                            } catch {
-                                print("error")
-                                return
-                            }
-                        }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/activeEnergyBurned", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-                    
-                    let walkingRunningDistanceQuery = HKSampleQuery(sampleType: walkingRunningDistance!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKQuantitySample]
-                        {
-                            do{
-                                let jsonData = try serializer.json(for: result)
-                                let data  = jsonData.data(using: String.Encoding.utf8)!
-                                let json = JSON(data)
-                                let jsony: JSON = [
-                                    self.uidLabel.text! : json["body"]
-                                ]
-                                ajaxObject.append(jsony)
-                            } catch {
-                                print("error")
-                                return
-                            }
-                        }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/walkingRunningDistance", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-                    
-                    
-                    
-                    
-                    let sleepQuery = HKSampleQuery(sampleType: sleepData!, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
-                        (query, results, error) -> Void in
-                        let serializer = OMHSerializer()
-                        var ajaxObject = [JSON]()
-                        for result in results as! [HKCategorySample]
-                        {
-                            do{
-                                let jsonData = try serializer.json(for: result)
-                                let data  = jsonData.data(using: String.Encoding.utf8)!
-                                let json = JSON(data)
-                                let jsony: JSON = [
-                                    self.uidLabel.text! : json["body"]
-                                ]
-                                ajaxObject.append(jsony)
-                            } catch {
-                                print("error")
-                                return
-                            }
-                        }
-                        let parameters: [String: [JSON]] = [
-                            "data" : ajaxObject
-                        ]
-                        Alamofire.request("http://129.12.178.207:3005/user/sleepData", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
-                        //todo handle the reponse
-                    }
-         
-                    
-                   
-                    //self.healthStore.execute(walkingRunningDistanceQuery)
-                    //self.healthStore.execute(sleepQuery)
-                    //self.healthStore.execute(activeEnergyBurnedQuery)
-                    //self.healthStore.execute(flightsClimbedQuery)
-                    //self.healthStore.execute(heartQuery)
-                    //self.healthStore.execute(stepCounterQuery)
                 }
             })
-        }
+        }//healthkit
     }
+    
+    func sendData(predicateDate : NSPredicate, stepCounterType :HKSampleType,heartRateType:HKSampleType,flightsClimbed:HKSampleType,activeEnergyBurned:HKSampleType, walkingRunningDistance:HKSampleType, sleepData:HKSampleType) {
+          let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        print("++++++++++++++++++++++++++")
+        print(predicateDate)
+        print("++++++++++++++++++++++++++")
+        let stepCounterQuery = HKSampleQuery(sampleType: stepCounterType , predicate: predicateDate , limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            print("in the step counter thing")
+            for result in results as! [HKQuantitySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            //print(parameters)
+            Alamofire.request("http://192.168.1.98:3005/user/stepCounter", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        let heartQuery = HKSampleQuery(sampleType: heartRateType, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            for result in results as! [HKQuantitySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            Alamofire.request("http://192.168.1.98:3005/user/heartrate", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        
+        let flightsClimbedQuery = HKSampleQuery(sampleType: flightsClimbed, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            for result in results as! [HKQuantitySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            Alamofire.request("http://192.168.1.98:3005/user/flightsClimbed", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        let activeEnergyBurnedQuery = HKSampleQuery(sampleType: activeEnergyBurned, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            for result in results as! [HKQuantitySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            Alamofire.request("http://192.168.1.98:3005/user/activeEnergyBurned", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        let walkingRunningDistanceQuery = HKSampleQuery(sampleType: walkingRunningDistance, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            for result in results as! [HKQuantitySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            Alamofire.request("http://192.168.1.98:3005/user/walkingRunningDistance", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        let sleepQuery = HKSampleQuery(sampleType: sleepData, predicate: predicateDate, limit: 0, sortDescriptors: [sortDescriptor]){
+            (query, results, error) -> Void in
+            let serializer = OMHSerializer()
+            var ajaxObject = [JSON]()
+            for result in results as! [HKCategorySample]
+            {
+                do{
+                    let jsonData = try serializer.json(for: result)
+                    let data  = jsonData.data(using: String.Encoding.utf8)!
+                    let json = JSON(data)
+                    let jsony: JSON = [
+                        self.uidValue! : json["body"]
+                    ]
+                    ajaxObject.append(jsony)
+                } catch {
+                    print("error")
+                    return
+                }
+            }
+            let parameters: [String: [JSON]] = [
+                "data" : ajaxObject
+            ]
+            Alamofire.request("http://192.168.1.98:3005/user/sleepData", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            //todo handle the reponse
+        }
+        
+        
+        
+        //self.healthStore.execute(walkingRunningDistanceQuery)
+        //self.healthStore.execute(sleepQuery)
+        //self.healthStore.execute(activeEnergyBurnedQuery)
+        //self.healthStore.execute(flightsClimbedQuery)
+        //self.healthStore.execute(heartQuery)
+        self.healthStore.execute(stepCounterQuery)
+        
+        //update the sync here
+        
+        
+        Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!, method: .post, parameters:  nil, encoding: URLEncoding.httpBody)
+        
+    }
+    
+    
+    
 }
 
