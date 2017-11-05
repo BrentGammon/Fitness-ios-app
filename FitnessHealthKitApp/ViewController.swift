@@ -168,19 +168,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                     let dateFormatter = DateFormatter()
                                     dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
                                     dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-                                    
-                                    
-                                    print("==========================")
-                                    print("Data String")
-                                    print(string)////2017-11-01T14:18:00.131Z
-                                    
-                                   
-                                    
-                                    
-                                    print("Date string to date")
-                                    print(dateFormatter.date(from: string))
-                                    print("today date")
-                                    print(today)
                                     let predicateDate = HKQuery.predicateForSamples(withStart: dateFormatter.date(from: string), end: today)
                                     print(predicateDate)
                                     self.sendData(predicateDate: predicateDate, stepCounterType:stepCounterType!,heartRateType:heartRateType!, flightsClimbed:flightsClimbed!,activeEnergyBurned:activeEnergyBurned!,walkingRunningDistance:walkingRunningDistance!, sleepData:sleepData!)
@@ -200,9 +187,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
     
     func sendData(predicateDate : NSPredicate, stepCounterType :HKSampleType,heartRateType:HKSampleType,flightsClimbed:HKSampleType,activeEnergyBurned:HKSampleType, walkingRunningDistance:HKSampleType, sleepData:HKSampleType) {
           let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
-        print("++++++++++++++++++++++++++")
-        print(predicateDate)
-        print("++++++++++++++++++++++++++")
         let stepCounterQuery = HKSampleQuery(sampleType: stepCounterType , predicate: predicateDate , limit: 0, sortDescriptors: [sortDescriptor]){
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
@@ -364,11 +348,11 @@ class ViewController: UIViewController, LoginButtonDelegate {
         
         
         
-        //self.healthStore.execute(walkingRunningDistanceQuery)
-        //self.healthStore.execute(sleepQuery)
-        //self.healthStore.execute(activeEnergyBurnedQuery)
-        //self.healthStore.execute(flightsClimbedQuery)
-        //self.healthStore.execute(heartQuery)
+        self.healthStore.execute(walkingRunningDistanceQuery)
+        self.healthStore.execute(sleepQuery)
+        self.healthStore.execute(activeEnergyBurnedQuery)
+        self.healthStore.execute(flightsClimbedQuery)
+        self.healthStore.execute(heartQuery)
         self.healthStore.execute(stepCounterQuery)
         
         //update the sync here
