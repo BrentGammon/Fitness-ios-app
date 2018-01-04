@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FitnessHealthKitApp/ViewController.swift"
+            timestampString = "536791836.795631"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "21"
+            endingLineNumber = "21"
+            landmarkName = "ViewController"
+            landmarkType = "3">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.__deallocating_deinit"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142804.360458"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.init (nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;__ObjC.Bundle&gt;) -&gt; FitnessHealthKitApp.ViewController"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142804.36436"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "60">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.__allocating_init (nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;__ObjC.Bundle&gt;) -&gt; FitnessHealthKitApp.ViewController"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142804.367142"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "32">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.__allocating_init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;FitnessHealthKitApp.ViewController&gt;"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142804.369259"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;FitnessHealthKitApp.ViewController&gt;"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142804.371076"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "FitnessHealthKitApp/ViewController.swift"
+            timestampString = "536791836.796374"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "58"
+            endingLineNumber = "58"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.healthStore.getter : __ObjC.HKHealthStore"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142854.401615"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "48">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.init (nibName : Swift.Optional&lt;Swift.String&gt;, bundle : Swift.Optional&lt;__ObjC.Bundle&gt;) -&gt; FitnessHealthKitApp.ViewController"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142854.405755"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "60">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "FitnessHealthKitApp.ViewController.init (coder : __ObjC.NSCoder) -&gt; Swift.Optional&lt;FitnessHealthKitApp.ViewController&gt;"
+                  moduleName = "FitnessHealthKitApp"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/brentgammon/Library/Autosave%20Information/FitnessHealthKitApp/FitnessHealthKitApp/ViewController.swift"
+                  timestampString = "526142854.411276"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "31"
+                  endingLineNumber = "31"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>

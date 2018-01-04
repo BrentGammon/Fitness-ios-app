@@ -11,7 +11,7 @@ target 'FitnessHealthKitApp' do
   pod 'Firebase/Auth'
   pod 'Granola'
   pod 'SwiftyJSON'
-
+  pod 'Just'
   # Pods for FitnessHealthKitApp
 
   target 'FitnessHealthKitAppTests' do

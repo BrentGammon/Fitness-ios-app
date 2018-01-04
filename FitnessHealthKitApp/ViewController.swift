@@ -15,12 +15,12 @@ import AlamofireImage
 import FirebaseAuth
 import Granola
 import SwiftyJSON
+import Just
 
 
 class ViewController: UIViewController, LoginButtonDelegate {
     @IBOutlet weak var heartRate: UIButton!
     @IBOutlet weak var profileImageView: UIImageView!
-    @IBOutlet weak var getCallButton: UIButton!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var uidLabel: UILabel!
@@ -32,7 +32,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
     func loginButtonDidCompleteLogin(_ loginButton: LoginButton, result: LoginResult) {
         heartRate.isHidden = false
         profileImageView.isHidden = false
-        getCallButton.isHidden = false
         nameLabel.isHidden = false
         emailLabel.isHidden = false
         uidLabel.isHidden = false
@@ -42,7 +41,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
         print("log out of application")
         heartRate.isHidden = true
         profileImageView.isHidden = true
-        getCallButton.isHidden = true
         nameLabel.isHidden = true
         emailLabel.isHidden = true
         uidLabel.isHidden = true
@@ -66,7 +64,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
         loginButton.delegate = self
         
         
-        //print("here a")
+        print("here a")
         if (FBSDKAccessToken.current()) != nil{
            // print("here b")
             let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
@@ -76,22 +74,21 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     // ...
                     return
                 }
-             //   print("here c")
-             //print(user!)
+                print("here c")
+             
                 self.nameLabel.text = user?.displayName
                 self.emailLabel.text = user?.email
                 self.uidLabel.text = user?.uid
                 
                 self.uidValue = user?.uid
                 
-                if let x = user?.photoURL {
-                    self.profileImageView.af_setImage(withURL: x)
+                if let photoURL = user?.providerData[0].photoURL {
+                    self.profileImageView.af_setImage(withURL: photoURL)
                 }
             }
             
             heartRate.isHidden = false
             profileImageView.isHidden = false
-            getCallButton.isHidden = false
             nameLabel.isHidden = false
             emailLabel.isHidden = false
             
@@ -100,7 +97,6 @@ class ViewController: UIViewController, LoginButtonDelegate {
             print("not logged in")
             heartRate.isHidden = true
             profileImageView.isHidden = true
-            getCallButton.isHidden = true
             nameLabel.isHidden = true
             emailLabel.isHidden = true
             uidLabel.isHidden = true
@@ -115,13 +111,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
     }
 
     
-    //sync health data
-    
-    @IBAction func getData(_ sender: Any) {
-        Alamofire.request("https://jsonplaceholder.typicode.com/users").responseJSON {
-            response in print(response)
-        }
-    }
+ 
     
     @IBAction func getHeartRateData(_ sender: Any) {
         if HKHealthStore.isHealthDataAvailable() {
@@ -187,6 +177,9 @@ class ViewController: UIViewController, LoginButtonDelegate {
     
     func sendData(predicateDate : NSPredicate, stepCounterType :HKSampleType,heartRateType:HKSampleType,flightsClimbed:HKSampleType,activeEnergyBurned:HKSampleType, walkingRunningDistance:HKSampleType, sleepData:HKSampleType) {
           let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)
+        
+        
+        
         let stepCounterQuery = HKSampleQuery(sampleType: stepCounterType , predicate: predicateDate , limit: 0, sortDescriptors: [sortDescriptor]){
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
@@ -207,11 +200,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            //print(parameters)
-            Alamofire.request("http://192.168.1.98:3005/user/stepCounter", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            Alamofire.request("http://192.168.1.98:3005/user/stepCounter", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -234,10 +223,8 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            Alamofire.request("http://192.168.1.98:3005/user/heartrate", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+          
+            Alamofire.request("http://192.168.1.98:3005/user/heartrate", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -261,10 +248,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            Alamofire.request("http://192.168.1.98:3005/user/flightsClimbed", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            Alamofire.request("http://192.168.1.98:3005/user/flightsClimbed", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -287,10 +271,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            Alamofire.request("http://192.168.1.98:3005/user/activeEnergyBurned", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            Alamofire.request("http://192.168.1.98:3005/user/activeEnergyBurned", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -313,10 +294,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            Alamofire.request("http://192.168.1.98:3005/user/walkingRunningDistance", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            Alamofire.request("http://192.168.1.98:3005/user/walkingRunningDistance", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -339,26 +317,31 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            let parameters: [String: [JSON]] = [
-                "data" : ajaxObject
-            ]
-            Alamofire.request("http://192.168.1.98:3005/user/sleepData", method: .post, parameters:  parameters, encoding: URLEncoding.httpBody)
+            Alamofire.request("http://192.168.1.98:3005/user/sleepData", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
         
         
-        self.healthStore.execute(walkingRunningDistanceQuery)
-        self.healthStore.execute(sleepQuery)
-        self.healthStore.execute(activeEnergyBurnedQuery)
-        self.healthStore.execute(flightsClimbedQuery)
-        self.healthStore.execute(heartQuery)
+       // self.healthStore.execute(walkingRunningDistanceQuery)
+       // self.healthStore.execute(sleepQuery)
+        //self.healthStore.execute(activeEnergyBurnedQuery)
+        //self.healthStore.execute(flightsClimbedQuery)
+       // self.healthStore.execute(heartQuery)
         self.healthStore.execute(stepCounterQuery)
         
         //update the sync here
         
         
-        Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!, method: .post, parameters:  nil, encoding: URLEncoding.httpBody)
+        //Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!, method: .post, parameters:  nil, encoding: URLEncoding.httpBody)
+        
+        //Alamofire.request("http://192.168.1.98:3005/demoendpoint", method: .post, parameters:  ["brent": "gammon"], encoding: URLEncoding.httpBody)
+//       Just.post(
+//            "http://192.168.1.98:3005/demoendpoint",
+//            data: ["username": "barryallen", "password":"ReverseF1ashSucks"]
+//        )
+        
+ 
         
     }
     
