@@ -140,7 +140,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 
                 ], completion: { (res, error) in
                 if(res){
-                    Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!).validate().responseJSON {
+                    Alamofire.request("http://129.12.179.252:3005/api/get/user/lastSync/" + self.uidValue!).validate().responseJSON {
                         response in switch response.result {
                         case .success(let value):
                           
@@ -149,6 +149,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                                 let today = Date()
                                 let start = Calendar.current.date(byAdding: .day, value: -7, to: today)!
                                 let predicateDate = HKQuery.predicateForSamples(withStart: start, end: today)
+                                print(predicateDate)
                                 self.sendData(predicateDate: predicateDate, stepCounterType:stepCounterType!,heartRateType:heartRateType!, flightsClimbed:flightsClimbed!,activeEnergyBurned:activeEnergyBurned!,walkingRunningDistance:walkingRunningDistance!, sleepData:sleepData!)
                              } else {
                                 //print("we have a date")
@@ -200,7 +201,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            Alamofire.request("http://192.168.1.98:3005/user/stepCounter", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/stepCounter", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -208,6 +209,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
             var ajaxObject = [JSON]()
+            print("in the heart rate thing")
             for result in results as! [HKQuantitySample]
             {
                 do{
@@ -224,7 +226,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                 }
             }
           
-            Alamofire.request("http://192.168.1.98:3005/user/heartrate", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/heartrate", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -233,6 +235,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
             var ajaxObject = [JSON]()
+            print("in the flights climbed thing")
             for result in results as! [HKQuantitySample]
             {
                 do{
@@ -248,7 +251,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            Alamofire.request("http://192.168.1.98:3005/user/flightsClimbed", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/flightsClimbed", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -256,6 +259,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
             var ajaxObject = [JSON]()
+            print("in the active energy thing")
             for result in results as! [HKQuantitySample]
             {
                 do{
@@ -271,7 +275,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            Alamofire.request("http://192.168.1.98:3005/user/activeEnergyBurned", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/activeEnergyBurned", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -279,6 +283,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
             var ajaxObject = [JSON]()
+            print("in the walking distance thing")
             for result in results as! [HKQuantitySample]
             {
                 do{
@@ -294,7 +299,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            Alamofire.request("http://192.168.1.98:3005/user/walkingRunningDistance", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/walkingRunningDistance", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
@@ -302,6 +307,7 @@ class ViewController: UIViewController, LoginButtonDelegate {
             (query, results, error) -> Void in
             let serializer = OMHSerializer()
             var ajaxObject = [JSON]()
+            print("in the sleep thing")
             for result in results as! [HKCategorySample]
             {
                 do{
@@ -317,35 +323,29 @@ class ViewController: UIViewController, LoginButtonDelegate {
                     return
                 }
             }
-            Alamofire.request("http://192.168.1.98:3005/user/sleepData", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
+            Alamofire.request("http://129.12.179.252:3005/api/post/user/sleepData", method: .post, parameters:  ["data":ajaxObject], encoding: URLEncoding.httpBody)
             //todo handle the reponse
         }
         
         
         
-       // self.healthStore.execute(walkingRunningDistanceQuery)
-       // self.healthStore.execute(sleepQuery)
-        //self.healthStore.execute(activeEnergyBurnedQuery)
-        //self.healthStore.execute(flightsClimbedQuery)
-       // self.healthStore.execute(heartQuery)
+        self.healthStore.execute(walkingRunningDistanceQuery)
+        self.healthStore.execute(sleepQuery)
+        self.healthStore.execute(activeEnergyBurnedQuery)
+        self.healthStore.execute(flightsClimbedQuery)
+        self.healthStore.execute(heartQuery)
         self.healthStore.execute(stepCounterQuery)
         
         //update the sync here
         
         
-        //Alamofire.request("http://192.168.1.98:3005/user/lastSync/" + self.uidValue!, method: .post, parameters:  nil, encoding: URLEncoding.httpBody)
+        Alamofire.request("http://129.12.179.252:3005/api/post/user/lastSync/" + self.uidValue!, method: .post, parameters:  nil, encoding: URLEncoding.httpBody)
         
         //Alamofire.request("http://192.168.1.98:3005/demoendpoint", method: .post, parameters:  ["brent": "gammon"], encoding: URLEncoding.httpBody)
 //       Just.post(
 //            "http://192.168.1.98:3005/demoendpoint",
 //            data: ["username": "barryallen", "password":"ReverseF1ashSucks"]
 //        )
-        
- 
-        
     }
-    
-    
-    
 }
 
